@@ -1,0 +1,29 @@
+<%- include("header") -%>
+
+  <div class="box" id="heading">
+    <h1> <%= listTitle %> </h1>
+  </div>
+
+
+  <!-- list created dynamically using js and ejs -->
+  <div class="box">
+    <ul>
+      <% for (var i=0; i<newListItems.length; i++){ %>
+      </newListItems.length;>
+      <div class="item">
+        <input type="checkbox">
+        <p><%= newListItems[i] %></p>
+      </div>
+
+      <%  }  %>
+    </ul>
+
+    <!-- form for posting new items to the list -->
+    <form class="item" action="/" method="post">
+      <input type="text" name="newItem" placeholder="New Item">
+      <button type="submit" name="list" value=<%= listTitle %>>+</button>
+    </form>
+
+  </div>
+
+<%- include("footer") -%>
