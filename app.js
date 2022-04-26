@@ -46,6 +46,17 @@ const item3 = new Item({
 
 const defaultItems = [item1, item2, item3];
 
+//creating new list Schema
+
+const listSchema = {
+  name: String,
+  items: [itemsSchema]
+};
+
+//creating mongoose model
+
+const List = mongoose.model('List', listSchema);
+
 
 
 // Get and Post request:
@@ -73,6 +84,40 @@ app.get("/", function (req, res) {
   });
 });
 
+//*******using express route paramaters to create dynamic express routes
+//*******allows you to create new pages dynamically without defining get and post routes
+//*******also creates new list documents dynamically within the call function
+app.get("/:customListName", function(req, res) {
+  
+    const customListName = req.params.customListName;
+  
+    List.findOne({
+      name: customListName
+    }, function(err, foundList) {
+      if (!err) {
+        if (!foundList) {
+          //create a new list
+          const list = new List({
+            name: customListName,
+            items: defaultItems
+          });
+          list.save(function(err, result){
+            res.redirect("/" + customListName);
+          });
+        } else {
+          //show an existing list
+          res.render("list", {
+            listTitle: foundList.name,
+            newListItems: foundList.items
+          })
+        }
+      }
+    });
+  
+  
+  });
+
+
 app.post("/", function (req, res) {
 
   const itemName = req.body.newItem;
@@ -96,18 +141,6 @@ app.post("/delete", function(req, res){
   })
 });
 
-app.get("/work", function (req, res) {
-  res.render("list", {
-    listTitle: "Work List",
-    newListItems: workItems
-  })
-});
-
-app.post("/work", function (req, res) {
-  let item = req.body.newItem;
-  workItems.push(item);
-  res.redirect("/work");
-});
 
 app.get("/about", function (req, res) {
   res.render("about")
