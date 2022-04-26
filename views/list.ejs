@@ -7,16 +7,15 @@
 
   <!-- list created dynamically using js and ejs -->
   <div class="box">
-    <ul>
-      <% for (var i=0; i<newListItems.length; i++){ %>
-      </newListItems.length;>
+    
+      <% newListItems.forEach(function(item){ %>
+     
       <div class="item">
         <input type="checkbox">
-        <p><%= newListItems[i] %></p>
+        <p><%= item.name %></p>
       </div>
-
-      <%  }  %>
-    </ul>
+      <%  }) %>
+  
 
     <!-- form for posting new items to the list -->
     <form class="item" action="/" method="post">

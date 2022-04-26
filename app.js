@@ -10,16 +10,22 @@ const app = express();
 app.set("view engine", "ejs");
 
 // body-parser to parse json data from post request
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
 
 // telling express where to find static files for css and images
 app.use(express.static("public"));
 
 //connecting and creating new db
-mongoose.connect('mongodb://localhost:27017/todolistDB', {useNewUrlParser: true});
+mongoose.connect('mongodb://localhost:27017/todolistDB', {
+  useNewUrlParser: true
+});
 
 //creating new mongoose schema
-const itemsSchema = {name: String};
+const itemsSchema = {
+  name: String
+};
 
 //creating new mongoose model
 const Item = mongoose.model('Item', itemsSchema);
@@ -40,27 +46,34 @@ const item3 = new Item({
 
 const defaultItems = [item1, item2, item3];
 
-Item.insertMany(defaultItems, function(err){
-  if (err) {
-    console.log(err);
-  } else {
-    console.log("Successfully saved default items to DB.")
-  }
-});
+
 
 // Get and Post request:
 
-app.get("/", function(req, res) {
+app.get("/", function (req, res) {
 
-  
-  res.render("list", {
-    listTitle: "Today",
-    newListItems: items
+  //If there are no items in the list then, insert default items and redirect
+  Item.find({}, function (err, foundItems) {
+
+    if (foundItems.length === 0) {
+      Item.insertMany(defaultItems, function (err) {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log("Successfully saved default items to DB.")
+        }
+      });
+      res.redirect("/");
+    } else {
+      res.render("list", {
+        listTitle: "Today",
+        newListItems: foundItems
+      });
+    }
   });
-
 });
 
-app.post("/", function(req, res) {
+app.post("/", function (req, res) {
 
   let item = req.body.newItem;
 
@@ -74,20 +87,20 @@ app.post("/", function(req, res) {
   }
 });
 
-app.get("/work", function(req, res) {
+app.get("/work", function (req, res) {
   res.render("list", {
     listTitle: "Work List",
     newListItems: workItems
   })
 });
 
-app.post("/work", function(req, res) {
+app.post("/work", function (req, res) {
   let item = req.body.newItem;
   workItems.push(item);
   res.redirect("/work");
 });
 
-app.get("/about", function(req, res) {
+app.get("/about", function (req, res) {
   res.render("about")
 });
 
@@ -97,6 +110,6 @@ if (port == null || port == "") {
   port = 3000;
 }
 
-app.listen(port, function() {
+app.listen(port, function () {
   console.log("Server started successfully");
 });
