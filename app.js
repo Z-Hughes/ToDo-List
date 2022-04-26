@@ -19,10 +19,10 @@ app.use(express.static("public"));
 mongoose.connect('mongodb://localhost:27017/todolistDB', {useNewUrlParser: true});
 
 //creating new mongoose schema
-const itemSchema = new Schema ({name: String})
+const itemsSchema = {name: String};
 
 //creating new mongoose model
-const Item = mongoose.model('Item', itemSchema)
+const Item = mongoose.model('Item', itemsSchema);
 
 
 //creating first three default items
@@ -38,7 +38,15 @@ const item3 = new Item({
   name: "<-- Hit this to delete an item."
 });
 
-const defaultItems = [item2, item2, item3]
+const defaultItems = [item1, item2, item3];
+
+Item.insertMany(defaultItems, function(err){
+  if (err) {
+    console.log(err);
+  } else {
+    console.log("Successfully saved default items to DB.")
+  }
+});
 
 // Get and Post request:
 
@@ -84,8 +92,11 @@ app.get("/about", function(req, res) {
 });
 
 // setting server to listen on port 3000
-app.listen(3000, function() {
-  console.log("Server started on port 3000");
-});
+let port = process.env.PORT;
+if (port == null || port == "") {
+  port = 3000;
+}
 
-// Just random text to fix git commit
+app.listen(port, function() {
+  console.log("Server started successfully");
+});
