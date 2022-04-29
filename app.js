@@ -1,7 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-
+const _ = require("lodash");
 
 // Initiating express app
 const app = express();
@@ -87,33 +87,29 @@ app.get("/", function (req, res) {
 //*******using express route paramaters to create dynamic express routes
 //*******allows you to create new pages dynamically without defining get and post routes
 //*******also creates new list documents dynamically within the call function
-app.get("/:customListName", function(req, res) {
-  
-    const customListName = req.params.customListName;
-  
-    List.findOne({
-      name: customListName
-    }, function(err, foundList) {
-      if (!err) {
-        if (!foundList) {
-          //create a new list
-          const list = new List({
-            name: customListName,
-            items: defaultItems
-          });
-          list.save(function(err, result){
-            res.redirect("/" + customListName);
-          });
-        } else {
-          //show an existing list
-          res.render("list", {
-            listTitle: foundList.name,
-            newListItems: foundList.items
-          })
-        }
+app.get("/:customListName", function(req, res){
+  const customListName = _.capitalize(req.params.customListName);
+
+  List.findOne({name: customListName}, function(err, foundList){
+    if (!err){
+      if (!foundList){
+        //Create a new list
+        const list = new List({
+          name: customListName,
+          items: defaultItems
+        });
+        list.save();
+        res.redirect("/" + customListName);
+      } else {
+        //Show an existing list
+        res.render("list", {
+          listTitle: foundList.name, 
+          newListItems: foundList.items
+        });
       }
-    });
+    }
   });
+});
 
 
   app.post("/", function(req, res) {
@@ -133,23 +129,39 @@ app.get("/:customListName", function(req, res) {
           name: listName
         }, function(err, foundList) {
           foundList.items.push(item);
-          foundList.save(function(err, result){
-            res.redirect("/" + listName);
-          });
+          foundList.save()
+          res.redirect("/" + listName);
         });
       }
     });
 
-app.post("/delete", function(req, res){
-  const checkedItemId = req.body.checkbox;
-
-  Item.findByIdAndRemove(checkedItemId, function(err){
-    if (!err) {
-      console.log("Successfully deleted checked item.")
-      res.redirect("/")
-    }
-  })
-});
+    app.post("/delete", function(req, res){
+      const checkedItemId = req.body.checkbox;
+      const listName = req.body.listName;
+    
+      if (listName === "Today") {
+        Item.findByIdAndRemove(checkedItemId, function(err){
+          if (!err) {
+            console.log("Successfully deleted checked item.");
+            res.redirect("/");
+          }
+        });
+      } else {
+        List.findOneAndUpdate({
+          name: listName
+        }, {
+          $pull: {
+            items: {
+              _id: checkedItemId
+            }
+          }
+        }, function(err, foundList){
+          if (!err){
+            res.redirect("/" + listName);
+          }
+        });
+      }
+    });
 
 
 app.get("/about", function (req, res) {
