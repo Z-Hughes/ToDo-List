@@ -1,8 +1,17 @@
+/* rgb(209, 82, 60); (orange color for splatter) */
+/* rgb(194, 186, 180); (darker gray box for splatter) */
+
 html {
-  background-color: #E4E9FD;
-  background-image: -webkit-linear-gradient(65deg, #A683E3 50%, #E4E9FD 50%);
   min-height: 1000px;
   font-family: 'helvetica neue';
+}
+
+body{
+  background-image: url(../images/dark.jpg);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  text-align: center;
 }
 
 h1 {
@@ -13,13 +22,13 @@ h1 {
 .box {
   max-width: 400px;
   margin: 50px auto;
-  background: white;
+  background: rgb(197, 196, 196);
   border-radius: 5px;
   box-shadow: 5px 5px 15px -5px rgba(0, 0, 0, 0.3);
 }
 
 #heading {
-  background-color: #A683E3;
+  background-color: rgb(54, 141, 143);
   text-align: center;
 }
 
@@ -37,7 +46,7 @@ h1 {
 
 input:checked+p {
   text-decoration: line-through;
-  text-decoration-color: #A683E3;
+  text-decoration-color: rgb(54, 141, 143);
 }
 
 input[type="checkbox"] {
@@ -62,7 +71,7 @@ button {
   width: 50px;
   border-radius: 50%;
   border-color: transparent;
-  background-color: #A683E3;
+  background-color: rgb(54, 141, 143);
   color: #fff;
   font-size: 30px;
   padding-bottom: 6px;
@@ -82,7 +91,7 @@ input[type="text"] {
 
 input[type="text"]:focus {
   outline: none;
-  box-shadow: inset 0 -3px 0 0 #A683E3;
+  box-shadow: inset 0 -3px 0 0 rgb(54, 141, 143);
 }
 
 ::placeholder {
