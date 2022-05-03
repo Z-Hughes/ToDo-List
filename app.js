@@ -18,7 +18,7 @@ app.use(bodyParser.urlencoded({
 app.use(express.static("public"));
 
 //connecting and creating new db
-mongoose.connect('mongodb://localhost:27017/todolistDB', {
+mongoose.connect('mongodb+srv://admin-zach:maynard@cluster0.dj2xp.mongodb.net/todolistDB', {
   useNewUrlParser: true
 });
 
@@ -73,8 +73,9 @@ app.get("/", function (req, res) {
         } else {
           console.log("Successfully saved default items to DB.")
         }
+        res.redirect("/");
       });
-      res.redirect("/");
+      
     } else {
       res.render("list", {
         listTitle: "Today",
@@ -83,6 +84,7 @@ app.get("/", function (req, res) {
     }
   });
 });
+
 
 //*******using express route paramaters to create dynamic express routes
 //*******allows you to create new pages dynamically without defining get and post routes
@@ -129,11 +131,14 @@ app.get("/:customListName", function(req, res){
           name: listName
         }, function(err, foundList) {
           foundList.items.push(item);
-          foundList.save()
+          foundList.save(function(err, result){
           res.redirect("/" + listName);
         });
+      });
       }
     });
+
+
 
     app.post("/delete", function(req, res){
       const checkedItemId = req.body.checkbox;
